@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" style="font-size: 50px;">
+<head>
+    <title>测试</title>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+</head>
+<style>
+
+    .bg{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        left: 0;
+        top: 0;
+        position: absolute;
+    }
+    .wrapper{
+        width: 8rem;
+        height: 13rem;
+        margin: 0 auto;
+        position: relative;
+    }
+    .person_boy{
+        left: 0.5rem;
+        top: 7rem;
+        width: 2rem;
+        height: 4rem;
+        position: absolute;
+    }
+    .person_girl{
+        right: 0.5rem;
+        top: 7rem;
+        width: 2rem;
+        height: 4rem;
+        position: absolute;
+    }
+    .next{
+        bottom: 0.5rem;
+        right: 0.5rem;
+        width: 2rem;
+        height: 1rem;
+        position: absolute;
+    }
+    .boy_say_content{
+        width: 4rem;
+        height: 1rem;
+        color: white;
+        font-size: 20px;
+        position: absolute;
+        top: 5rem;
+        left: 1rem;
+        display: block;
+    }
+    .girle_say_content{
+        width: 4rem;
+        height: 1rem;
+        color: white;
+        font-size: 20px;
+        position: absolute;
+        top: 6rem;
+        right: 0.5rem;
+        display: none;
+    }
+    .music_icon{
+        right: 0.3rem;
+        top: 0.3rem;
+        width: 0.5rem;
+        height: 0.5rem;
+        position: absolute;
+        -moz-animation:rotates 2s linear 0s infinite ;
+        animation: rotates 2s linear 0s infinite;
+        -webkit-animation: rotates 2s linear 0s infinite;
+        background: url(image/music_on.png?v=0.1) no-repeat center center;
+        background-size: contain;
+    }
+</style>
+<body>
+
+    <div class="wrapper">
+        <img  class="bg" src="image/blue_bg_with_mark.png"/>
+        <img class="person_boy" src="image/boy_full.png"/>
+        <img class="person_girl" src="image/girl_full.png"/>
+        <img class="next" onclick="next()" src="image/half_next_step.png"/>
+
+        <div class="boy_say_content" id ="boy_say_content">
+            测试男性说话内容
+        </div>
+        <div class="girle_say_content" id = "girle_say_content">
+            测试女性说话内容
+        </div>
+
+        <div class="music_icon" id ="music_icon">
+            <audio id="BGM"  type="audio/mp3" autoplay loop="loop" src="image/bg.mp3"></audio>
+        </div>
+    </div>
+
+</body>
+
+<script>
+
+    function next(){
+        var display =  document.getElementById("boy_say_content").style.display
+        if(display == "none"){
+            document.getElementById("boy_say_content").style.display = "block"
+        }else{
+            document.getElementById("boy_say_content").style.display = "none"
+        }
+
+        var girlDisplay =  document.getElementById("girle_say_content").style.display
+        if(girlDisplay == "block"){
+            document.getElementById("girle_say_content").style.display = "none"
+        }else{
+            document.getElementById("girle_say_content").style.display = "block"
+        }
+    }
+
+
+    var BGM = document.getElementById('music_icon');
+    BGM.play();
+
+</script>
+
+</html>
