@@ -5,20 +5,24 @@
     <meta charset="UTF-8"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"> </script>
 </head>
 <style>
+    body{
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
     .bg{
         width: 100%;
-        height: 100%;
-        overflow: hidden;
         left: 0;
         top: 0;
         position: absolute;
     }
     .wrapper{
-        width: 8rem;
-        height: 13rem;
+        width: 100%;
         margin: 0 auto;
         position: relative;
     }
@@ -37,7 +41,7 @@
         position: absolute;
     }
     .next{
-        bottom: 0.5rem;
+        top: 12rem;
         right: 0.5rem;
         width: 2rem;
         height: 1rem;
@@ -75,6 +79,18 @@
         background: url(image/music_on.png?v=0.1) no-repeat center center;
         background-size: contain;
     }
+    .video{
+        position: absolute;
+        display: none;
+        top: 0;
+        left: 0;
+        background: black;
+        /* -webkit-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		-ms-transform: rotate(90deg);
+		-o-transform: rotate(90deg);
+		transform: rotate(90deg); */
+    }
 </style>
 <body>
 
@@ -88,19 +104,27 @@
             测试男性说话内容
         </div>
         <div class="girle_say_content" id = "girle_say_content">
-            测试女性说话内容
+            点下一步播放视频
         </div>
 
         <div class="music_icon" id ="music_icon">
             <audio id="BGM"  type="audio/mp3" autoplay loop="loop" src="image/bg.mp3"></audio>
         </div>
+        <video id="video" class="video"  preload="preload" controls="" name="media"><source src="image/1591966060839879.mp4" type="video/mp4"></video>
     </div>
 
 </body>
 
 <script>
 
+    var count = 0;
+
     function next(){
+        if(count == 1){
+            document.getElementById('video').style.display = "block"
+            resizeBody()
+            return
+        }
         var display =  document.getElementById("boy_say_content").style.display
         if(display == "none"){
             document.getElementById("boy_say_content").style.display = "block"
@@ -114,11 +138,28 @@
         }else{
             document.getElementById("girle_say_content").style.display = "block"
         }
+        count += 1;
     }
 
+    window.onload = function(){
+        // var BGM = document.getElementById('BGM');
+        // BGM.play();
+    }
 
-    var BGM = document.getElementById('music_icon');
-    BGM.play();
+    function resizeBody() {
+			var bodyHeight = document.documentElement.clientHeight;
+			var bodyWidth = document.documentElement.clientWidth;
+            $("#video").css({
+                "left" : -(bodyHeight - bodyWidth) /2  + "px",
+                "top" : (bodyHeight-bodyWidth)/2 + "px",
+                "width" : (bodyHeight ) + "px",
+                "height" : (bodyWidth ) + "px",
+                "transform":"rotate(90deg)"
+            })
+            // $("#video").rotate({animateTo:90});
+			var video = document.getElementById("video");
+			video.play();
+		}
 
 </script>
 
