@@ -84,12 +84,22 @@
         display: none;
         top: 0;
         left: 0;
-        background: black;
+        /* background: black; */
         /* -webkit-transform: rotate(90deg);
 		-moz-transform: rotate(90deg);
 		-ms-transform: rotate(90deg);
 		-o-transform: rotate(90deg);
 		transform: rotate(90deg); */
+    }
+    .question{
+        top: 5rem;
+        left: 2rem;
+        width: 7rem;
+        height: 1rem;
+        display: none;
+        color: black;
+        font-size: 40px;
+        position: absolute;
     }
 </style>
 <body>
@@ -98,8 +108,7 @@
         <img  class="bg" src="image/blue_bg_with_mark.png"/>
         <img class="person_boy" src="image/boy_full.png"/>
         <img class="person_girl" src="image/girl_full.png"/>
-        <img class="next" onclick="next()" src="image/half_next_step.png"/>
-
+       
         <div class="boy_say_content" id ="boy_say_content">
             测试男性说话内容
         </div>
@@ -111,18 +120,34 @@
             <audio id="BGM"  type="audio/mp3" autoplay loop="loop" src="image/bg.mp3"></audio>
         </div>
         <video id="video" class="video"  preload="preload" controls="" name="media"><source src="image/1591966060839879.mp4" type="video/mp4"></video>
-    </div>
+        
+            <div class="question" id = "question_id">
+                    现在展示问题，点下一步播放哦
+            </div>
+    
+            <img class="next" id="next" onclick="next()" src="image/half_next_step.png"/>    
+        
+        </div>
+       
 
 </body>
 
-<script>
+<script type="text/javascript">
 
     var count = 0;
+    var isPlay = false;
 
     function next(){
+        if(isPlay){
+            hide('next')
+            hide('question_id')
+            var myVideo = document.getElementById("video")
+            myVideo.play()
+        }
         if(count == 1){
             document.getElementById('video').style.display = "block"
             resizeBody()
+            isPlay = true
             return
         }
         var display =  document.getElementById("boy_say_content").style.display
@@ -141,10 +166,52 @@
         count += 1;
     }
 
-    window.onload = function(){
-        // var BGM = document.getElementById('BGM');
+    var pausePoint = [4,6,9,12,13,20,25,30,40]
+
+    function pageOnLoad(){
+ // var BGM = document.getElementById('BGM');
         // BGM.play();
+
+        console.log("window load");
+        var myVideo = document.getElementById("video")
+
+        //监听播放开始
+        myVideo.addEventListener('play',function(){
+            console.log("开始播放");
+        });
+ 
+        //监听播放结束
+        myVideo.addEventListener('pause',function(){
+            console.log("播放暂停");
+        });
+ 
+        //监听播放结束
+        myVideo.addEventListener('ended',function(){
+            console.log("播放结束");
+            hide('video')
+            isPlay = false;
+            count = 0;
+            show('next')
+        });
+
+        myVideo.addEventListener("timeupdate",function(){
+            var timeDisplay;
+            //用秒数来显示当前播放进度
+            timeDisplay = Math.floor(myVideo.currentTime);
+            console.log(Math.floor(myVideo.currentTime))
+ 
+            //当视频播放到 4s的时候做处理
+            if(timeDisplay == pausePoint[0]){
+                    //处理代码
+                myVideo.pause()
+                show("next")
+                show("question_id")
+                pausePoint.shift()
+            }
+        },false);  
     }
+
+    window.onload = pageOnLoad;
 
     function resizeBody() {
 			var bodyHeight = document.documentElement.clientHeight;
@@ -159,7 +226,16 @@
             // $("#video").rotate({animateTo:90});
 			var video = document.getElementById("video");
 			video.play();
+            hide('next')
 		}
+
+    function hide(tagId){
+        document.getElementById(tagId).style.display = "none"
+    }
+
+    function show(tagId){
+        document.getElementById(tagId).style.display = "block"
+    }
 
 </script>
 
