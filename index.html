@@ -81,7 +81,8 @@
     }
     .video{
         position: absolute;
-        display: none;
+        display: none ;
+        -webkit-appearance: none;
         top: 0;
         left: 0;
         /* background: black; */
@@ -119,7 +120,7 @@
         <div class="music_icon" id ="music_icon">
             <audio id="BGM"  type="audio/mp3" autoplay loop="loop" src="image/bg.mp3"></audio>
         </div>
-        <video id="video" class="video"  preload="preload" controls="" name="media"><source src="image/1591966060839879.mp4" type="video/mp4"></video>
+        <video id="video" class="video"  preload="preload" name="media"><source src="image/1591966060839879.mp4" type="video/mp4"></video>
         
             <div class="question" id = "question_id">
                     现在展示问题，点下一步播放哦
