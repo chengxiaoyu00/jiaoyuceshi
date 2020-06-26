@@ -15,166 +15,115 @@
         padding: 0;
     }
 
+    .wrapper{
+        width: 100%;
+        margin: 0 auto;
+        position: relative;
+        overflow: hidden;
+    }
+
     .bg{
         width: 100%;
         left: 0;
         top: 0;
         position: absolute;
     }
-    .wrapper{
-        width: 100%;
-        margin: 0 auto;
-        position: relative;
-    }
-    .person_boy{
-        left: 0.5rem;
-        top: 7rem;
-        width: 2rem;
-        height: 4rem;
-        position: absolute;
-    }
-    .person_girl{
-        right: 0.5rem;
-        top: 7rem;
-        width: 2rem;
-        height: 4rem;
-        position: absolute;
-    }
-    .next{
-        top: 12rem;
-        right: 0.5rem;
-        width: 2rem;
-        height: 1rem;
-        position: absolute;
-    }
-    .boy_say_content{
-        width: 4rem;
-        height: 1rem;
-        color: white;
-        font-size: 20px;
-        position: absolute;
-        top: 5rem;
-        left: 1rem;
-        display: block;
-    }
-    .girle_say_content{
-        width: 4rem;
-        height: 1rem;
-        color: white;
-        font-size: 20px;
-        position: absolute;
-        top: 6rem;
-        right: 0.5rem;
-        display: none;
-    }
-    .music_icon{
-        right: 0.3rem;
-        top: 0.3rem;
-        width: 0.5rem;
-        height: 0.5rem;
-        position: absolute;
-        -moz-animation:rotates 2s linear 0s infinite ;
-        animation: rotates 2s linear 0s infinite;
-        -webkit-animation: rotates 2s linear 0s infinite;
-        background: url(image/music_on.png?v=0.1) no-repeat center center;
-        background-size: contain;
-    }
+
     .video{
         position: absolute;
-        display: none ;
-        -webkit-appearance: none;
+        display: none;
         top: 0;
         left: 0;
-        /* background: black; */
-        /* -webkit-transform: rotate(90deg);
-		-moz-transform: rotate(90deg);
-		-ms-transform: rotate(90deg);
-		-o-transform: rotate(90deg);
-		transform: rotate(90deg); */
     }
-    .question{
-        top: 5rem;
-        left: 2rem;
-        width: 7rem;
-        height: 1rem;
-        display: none;
-        color: black;
-        font-size: 40px;
+
+    .start{
         position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
     }
+    .answer_one{
+        position: absolute;
+        width: 200px;
+        height: 100px;
+        border:2px dashed #FFFFFF;
+    }
+    .next{
+        position: absolute;
+        display: none;
+        width: 0;
+        height: 0;
+    }
+    
 </style>
 <body>
 
-    <div class="wrapper">
+    <div class="wrapper" id="wrapper">
         <img  class="bg" src="image/blue_bg_with_mark.png"/>
-        <img class="person_boy" src="image/boy_full.png"/>
-        <img class="person_girl" src="image/girl_full.png"/>
+        <video id="video" class="video"  preload="preload" name="media"><source src="image/test_video.mp4" type="video/mp4"></video>
+        <img class="start" id="start" onclick="startPlay()" src="image/sure.png"/>
+        <img class="next" id="next" onclick="answerNext()" src="image/sure.png"/>
+    </div>
        
-        <div class="boy_say_content" id ="boy_say_content">
-            测试男性说话内容
-        </div>
-        <div class="girle_say_content" id = "girle_say_content">
-            点下一步播放视频
-        </div>
-
-        <div class="music_icon" id ="music_icon">
-            <audio id="BGM"  type="audio/mp3" autoplay loop="loop" src="image/bg.mp3"></audio>
-        </div>
-        <video id="video" class="video"  preload="preload" name="media"><source src="image/1591966060839879.mp4" type="video/mp4"></video>
-        
-            <div class="question" id = "question_id">
-                    现在展示问题，点下一步播放哦
-            </div>
-    
-            <img class="next" id="next" onclick="next()" src="image/half_next_step.png"/>    
-        
-        </div>
-       
-
 </body>
 
 <script type="text/javascript">
 
-    var count = 0;
-    var isPlay = false;
+   var questionPausePoit = [153.778493,179.956628]
+   var isPlay = false;
+   var questionPauseIndex = -1;
+   var questionAnswer = []
 
-    function next(){
-        if(isPlay){
-            hide('next')
-            hide('question_id')
-            var myVideo = document.getElementById("video")
-            myVideo.play()
-        }
-        if(count == 1){
-            document.getElementById('video').style.display = "block"
-            resizeBody()
-            isPlay = true
-            return
-        }
-        var display =  document.getElementById("boy_say_content").style.display
-        if(display == "none"){
-            document.getElementById("boy_say_content").style.display = "block"
-        }else{
-            document.getElementById("boy_say_content").style.display = "none"
-        }
+   window.onload = function(){
+        this.resizeView()
+        this.loadListener()
+   }
 
-        var girlDisplay =  document.getElementById("girle_say_content").style.display
-        if(girlDisplay == "block"){
-            document.getElementById("girle_say_content").style.display = "none"
-        }else{
-            document.getElementById("girle_say_content").style.display = "block"
-        }
-        count += 1;
-    }
+   function resizeView(){
+        var bodyHeight = document.documentElement.clientHeight;
+        var bodyWidth = document.documentElement.clientWidth;
 
-    var pausePoint = [4,6,9,12,13,20,25,30,40]
+        $("#wrapper").css({
+                "width" : (bodyWidth ) + "px",
+                "height" : (bodyHeight ) + "px",
+            })
 
-    function pageOnLoad(){
- // var BGM = document.getElementById('BGM');
-        // BGM.play();
+        var videoWidth = bodyWidth;
+        var videoHeight = bodyWidth * 1920/ 1080;
+        var top = ( bodyHeight - videoHeight )/ 2;
 
-        console.log("window load");
+        $("#video").css({
+                "top" : (top) + "px",
+                "width" : (videoWidth ) + "px",
+                "height" : (videoHeight ) + "px",
+            })
+
+        var startWidth = 200;
+        var startHeight = startWidth * 73/ 238;
+        var startTop = (bodyHeight - startHeight )/ 2;
+        var startLeft = (bodyWidth - startWidth )/ 2;
+        $("#start").css({
+                "top" : (startTop) + "px",
+                "left" : (startLeft) + "px",
+                "width" : (startWidth ) + "px",
+                "height" : (startHeight ) + "px",
+            })
+
+        $("#next").css({
+                "bottom" :  "15px",
+                "right" : "0px",
+                "width" : (startWidth ) + "px",
+                "height" : (startHeight ) + "px",
+            })
+   }
+
+   function loadListener(){
         var myVideo = document.getElementById("video")
+
+        myVideo.addEventListener('touchstart', this.onTouchEvent.bind(this), false);
+        myVideo.addEventListener('touchmove', this.onTouchEvent.bind(this), false);
+        myVideo.addEventListener('touchend', this.onTouchEvent.bind(this), false);
 
         //监听播放开始
         myVideo.addEventListener('play',function(){
@@ -196,39 +145,124 @@
         });
 
         myVideo.addEventListener("timeupdate",function(){
-            var timeDisplay;
-            //用秒数来显示当前播放进度
-            timeDisplay = Math.floor(myVideo.currentTime);
-            console.log(Math.floor(myVideo.currentTime))
- 
-            //当视频播放到 4s的时候做处理
-            if(timeDisplay == pausePoint[0]){
-                    //处理代码
-                myVideo.pause()
-                show("next")
-                show("question_id")
-                pausePoint.shift()
+            var timeDisplay = myVideo.currentTime;
+            console.log("play time : " + myVideo.currentTime + " index : " + questionPauseIndex)
+            if(timeDisplay >= questionPausePoit[questionPauseIndex]){
+                myVideo.pause();
+                isPlay = false;
             }
-        },false);  
+        },false);
     }
 
-    window.onload = pageOnLoad;
+    function onTouchEvent(event){
+        var event = event || window.event;
+        switch (event.type) {
+                case "touchstart":
+                    console.log("touch start")
+                    break;
+                case "touchend":
+                    console.log("touch end")
+                    this.handleQuestion(event.changedTouches[0].clientX,event.changedTouches[0].clientY);
+                    break;
+                case "touchmove":
+                    console.log("touch move")
+                    break;
+        }
+    }
 
-    function resizeBody() {
-			var bodyHeight = document.documentElement.clientHeight;
-			var bodyWidth = document.documentElement.clientWidth;
-            $("#video").css({
-                "left" : -(bodyHeight - bodyWidth) /2  + "px",
-                "top" : (bodyHeight-bodyWidth)/2 + "px",
-                "width" : (bodyHeight ) + "px",
-                "height" : (bodyWidth ) + "px",
-                "transform":"rotate(90deg)"
-            })
-            // $("#video").rotate({animateTo:90});
-			var video = document.getElementById("video");
-			video.play();
-            hide('next')
-		}
+    function handleQuestion(x,y){
+        if(isPlay){
+            return
+        }
+        console.log("select answer x : " + x + " y : " + y);
+        var bodyHeight = document.documentElement.clientHeight;
+        if(questionPauseIndex == 0){
+            var top = 0;
+            if(y > 217 && y < 303){
+                top = bodyHeight * 0.339;
+                questionAnswer[0] = 1;
+            }else if(y > 322 && y < 414){
+                top = bodyHeight * 0.5031;
+                questionAnswer[0] = 2;
+            }else if( y > 429 && y < 512){
+                top = bodyHeight * 0.6703;
+                questionAnswer[0] = 3;
+            }
+            this.removeAnswerSelect('answer_id')
+            show("next")
+            addAnswerSelect(top);
+        }else if(questionPauseIndex == 1){
+            var top = 0;
+            if(y > 217 && y < 303){
+                top = bodyHeight * 0.339;
+                questionAnswer[0] = 1;
+            }else if(y > 322 && y < 414){
+                top = bodyHeight * 0.5031;
+                questionAnswer[0] = 2;
+            }
+            this.removeAnswerSelect('answer_id')
+            show("next")
+            addAnswerSelect(top);
+        }
+    }
+
+    function startPlay(){
+        this.hide("start")
+        this.show("video")
+        var myVideo = document.getElementById("video")
+        myVideo.play()
+        isPlay = true;
+        questionPauseIndex ++;
+        // myVideo.currentTime=178;
+    }
+
+    function addAnswerSelect(top){
+        var bodyWidth = document.documentElement.clientWidth;
+        var bodyHeight = document.documentElement.clientHeight;
+
+        var parentDiv = document.getElementById("wrapper");
+        var answerDiv = document.createElement("div");
+        var styleDes = "position:" + "absolute;";
+        styleDes += ("width:" + (bodyWidth - 10) + 'px;');
+        styleDes += ("height:" + (bodyHeight * 0.1345728) + 'px;');
+        styleDes += ("border:2px dashed #FFFFFF;");
+        styleDes += ("left:3px;");
+        styleDes += ("top:" + top+ "px;");
+        answerDiv.setAttribute('style', styleDes);
+        answerDiv.setAttribute('class', "answer_div");
+        answerDiv.setAttribute('id', "answer_id");
+        parentDiv.appendChild(answerDiv);  
+    }
+
+    function removeAnswerSelect(idName){
+        var div = document.getElementById(idName);
+        if(div){
+            div.parentNode.removeChild(div);
+        }
+    }
+
+    function answerNext(){
+        var myVideo = document.getElementById("video")
+        if(questionPauseIndex == 0){
+            myVideo.play()
+            isPlay =  true;
+            questionPauseIndex ++ ;
+            this.removeAnswerSelect('answer_id')
+            hide("next")
+            if(questionAnswer[0] == 2){
+            }
+        }else if(questionPauseIndex == 1){
+            if(questionAnswer[0] == 1){
+            }else{
+                myVideo.currentTime=190.9;
+            }
+            myVideo.play()
+            isPlay =  true;
+            questionPauseIndex ++ ;
+            this.removeAnswerSelect('answer_id')
+            hide("next")
+        }
+    }
 
     function hide(tagId){
         document.getElementById(tagId).style.display = "none"
