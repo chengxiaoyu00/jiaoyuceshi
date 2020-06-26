@@ -61,7 +61,18 @@
 
     <div class="wrapper" id="wrapper">
         <img  class="bg" src="image/blue_bg_with_mark.png"/>
-        <video id="video" class="video"  preload="preload" name="media"><source src="image/test_video.mp4" type="video/mp4"></video>
+        <video id="video"
+               class="video"
+               preload="preload"
+               name="media"
+               disablePictureInPicture
+               x-webkit-airplay="deny"
+               webkit-playsinline="true"
+               playsinline="true"
+               x5-video-player-type="h5">
+            <source src="image/test_video.mp4" type="video/mp4">
+
+        </video>
         <img class="start" id="start" onclick="startPlay()" src="image/sure.png"/>
         <img class="next" id="next" onclick="answerNext()" src="image/sure.png"/>
     </div>
