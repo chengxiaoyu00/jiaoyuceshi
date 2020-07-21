@@ -1,322 +1,192 @@
-<!DOCTYPE html>
-<html lang="en" style="font-size: 50px;">
+<html ondragstart="return false">
+<!--元素-->
+
 <head>
-    <title>测试</title>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"> </script>
+    <meta charset="utf-8" name="viewport"
+        content="width=device-width,initial-scale=1.0,maximum-scale=1.0, user-scalable=0" />
+    <title></title>
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            overflow: hidden;
+
+        }
+
+        #perspeative {
+            perspective: 900px;
+            /*景深*/
+            margin: 250px auto;
+        }
+
+        body {
+            height: 100vh;
+        }
+
+        #tupian {
+            width: 200px;
+            height: 180px;
+            margin: auto;
+            transform-style: preserve-3d;
+            /*3d视角*/
+            transform: rotateX(-30deg) rotateY(0deg);
+            /*3个方向*/
+
+        }
+
+        img {
+            position: absolute;
+            width: 200px;
+            height: 180px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
-<style>
-    body{
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
 
-    .wrapper{
-        width: 100%;
-        margin: 0 auto;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .bg{
-        width: 100%;
-        left: 0;
-        top: 0;
-        position: absolute;
-    }
-
-    .video{
-        position: absolute;
-        display: none;
-        top: 0;
-        left: 0;
-    }
-
-    .start{
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-    }
-    .answer_one{
-        position: absolute;
-        width: 200px;
-        height: 100px;
-        border:2px dashed #FFFFFF;
-    }
-    .next{
-        position: absolute;
-        display: none;
-        width: 0;
-        height: 0;
-    }
-    
-</style>
-<body>
-
-    <div class="wrapper" id="wrapper">
-        <img  class="bg" src="image/blue_bg_with_mark.png"/>
-        <video id="video"
-               class="video"
-               preload="preload"
-               name="media"
-               disablePictureInPicture
-               x-webkit-airplay="deny"
-               webkit-playsinline="true"
-               playsinline="true"
-               x5-video-player-type="h5">
-            <source src="image/test_video.mp4" type="video/mp4">
-
-        </video>
-        <img class="start" id="start" onclick="startPlay()" src="image/sure.png"/>
-        <img class="next" id="next" onclick="answerNext()" src="image/sure.png"/>
+<body class="width:100%;height:100%;">
+    <div id="perspeative">
+        <div id="tupian">
+            <img src="img/1.jpg" />
+            <img src="img/2.jpg" />
+            <img src="img/3.jpg" />
+            <img src="img/4.jpg" />
+            <img src="img/5.jpg" />
+            <img src="img/6.jpg" />
+            <img src="img/7.jpg" />
+            <img src="img/8.jpg" />
+            <img src="img/9.jpg" />
+            <img src="img/10.jpg" />
+            <img src="img/11.jpg" />
+        </div>
     </div>
-       
+
+    <script>
+        var a = document.getElementsByTagName("img");
+        var oldX, oldY, ljsX = -30, ljsY = 0, chaiX, chaiY;
+        var deg = 360 / a.length;
+        var tp = document.getElementById("tupian");
+        console.log(tp)
+        //			在window加载后加载
+        window.onload = function () {
+            Array.prototype.forEach.call(a, function (ele, ind) {
+                ele.style.transform = "rotateY(" + deg * ind + "deg) translateZ(350px)";
+                //				1值过渡时间   1值 延时时间
+                ele.style.transition = "2s " + (a.length - ind) / 6 + "s";
+            })
+        }
+
+        document.onmousedown = function (e) {
+            var e = e || window.event;
+            console.log("按下")
+
+            oldX = e.clientX;
+            oldY = e.clientY;
+
+            console.log(e.clientX, e.clientY)
+
+            this.onmousemove = function (e) {
+                var e = e || window.event;
+                console.log("按下并移动")
+
+                var newX = e.clientX;
+                newY = e.clientY;
+
+                chaiX = newX - oldX;
+                chaiY = newY - oldY;
+
+                ljsX -= chaiY * 0.2;//加等于必须连在一起
+                ljsY += chaiX * 0.2;
+
+                tp.style.transform = "rotateX(" + ljsX + "deg) rotateY(" + ljsY + "deg)";
+
+                oldX = newX;
+                oldY = newY;
+                console.log(chaiY, chaiX)
+
+            }
+            this.onmouseup = function (e) {
+                var e = e || window.event;
+                //					清空onmousemove事件
+                this.onmousemove = null;
+                console.log("松开")
+
+                var trmer = setInterval(function () {
+
+                    chaiY *= 0.95;//加等于必须连在一起
+                    chaiX *= 0.95;
+
+                    ljsX -= chaiY * 0.2;
+                    ljsY += chaiX * 0.2;
+
+                    tp.style.transform = "rotateX(" + ljsX + "deg) rotateY(" + ljsY + "deg)";
+
+                    if (Math.abs(chaiY) < 0.1 && Math.abs(chaiX) < 0.1) {
+                        clearInterval(trmer);
+                    }
+
+                }, 10)
+
+            }
+
+        }
+
+        // 在移动端的的时候触发
+
+        document.addEventListener('touchstart', function (e) {//触摸屏膜
+            if (e.touches.length = 1) {
+                var e = e || window.event;
+                console.log("按下")
+                console.log(e)
+
+                oldX = e.touches[0].clientX;
+                oldY = e.touches[0].clientY;
+                console.log(oldX, oldY)
+                this.addEventListener('touchmove', function (event) {//触摸屏膜并移动
+                    event.preventDefault();
+                    var newX = event.touches[0].clientX;
+                    newY = event.touches[0].clientY;
+                    console.log(newX, newY)
+                    chaiX = newX - oldX;
+                    chaiY = newY - oldY;
+
+                    ljsX -= chaiY * 0.2;//加等于必须连在一起
+                    ljsY += chaiX * 0.2;
+                    console.log(ljsX, ljsY)
+                    tp.style.transform = "rotateX(" + ljsX + "deg) rotateY(" + ljsY + "deg)";
+
+                    oldX = newX;
+                    oldY = newY;
+                });
+
+                this.addEventListener('touchend', function (events) {//触摸屏膜结束
+                    events.preventDefault();
+                    var events = events || window.event;
+                    var trmer = setInterval(function () {
+
+                        chaiY *= 0.95;//加等于必须连在一起
+                        chaiX *= 0.95;
+
+                        ljsX -= chaiY * 0.2;
+                        ljsY += chaiX * 0.2;
+                        console.log(ljsX, ljsY)
+                        tp.style.transform = "rotateX(" + ljsX + "deg) rotateY(" + ljsY + "deg)";
+
+                        if (Math.abs(chaiY) < 0.1 && Math.abs(chaiX) < 0.1) {
+                            clearInterval(trmer);
+                        }
+
+                    }, 10)
+
+                })
+            }
+        })
+
+
+    </script>
+
+
+
 </body>
-
-<script type="text/javascript">
-
-   var questionPausePoit = [153.778493,179.956628]
-   var isPlay = false;
-   var questionPauseIndex = -1;
-   var questionAnswer = []
-   var bodyWidth = 0;
-   var bodyHeight = 0;
-   var bodyLeft = 0;
-   var bodyTop = 0;
-   var isPhone = false;
-
-   window.onload = function(){
-        var documentHeight = document.documentElement.clientHeight;
-        var documentWidth = document.documentElement.clientWidth;
-        this.isPhone = this.browserRedirect();
-        if(documentWidth / documentHeight > 1080 /1920){
-            this.bodyHeight = documentHeight;
-            this.bodyWidth = documentHeight * 1080 / 1920 ;
-        } else {
-            this.bodyWidth = documentWidth;
-            this.bodyHeight = documentWidth * 1920 / 1080;
-        }
-        this.bodyTop = (documentHeight - bodyHeight )/ 2;
-        this.resizeView()
-        this.loadListener()
-   }
-
-   function resizeView(){
-        var documentHeight = document.documentElement.clientHeight;
-        var documentWidth = document.documentElement.clientWidth;
-        $("#wrapper").css({
-                "width" : (bodyWidth ) + "px",
-                "height" : (bodyHeight ) + "px",
-            })
-
-        var top = ( documentHeight - bodyHeight )/ 2;
-
-        $("#video").css({
-                "top" : (top) + "px",
-                "width" : (bodyWidth ) + "px",
-                "height" : (bodyHeight ) + "px",
-            })
-
-        var startWidth = 200;
-        var startHeight = startWidth * 73/ 238;
-        var startTop = (bodyHeight - startHeight )/ 2;
-        var startLeft = (bodyWidth - startWidth )/ 2;
-        $("#start").css({
-                "top" : (startTop) + "px",
-                "left" : (startLeft) + "px",
-                "width" : (startWidth ) + "px",
-                "height" : (startHeight ) + "px",
-            })
-
-        $("#next").css({
-                "bottom" :  "15px",
-                "right" : "0px",
-                "width" : (startWidth ) + "px",
-                "height" : (startHeight ) + "px",
-            })
-   }
-
-   function loadListener(){
-        var myVideo = document.getElementById("video")
-        if(this.isPhone){
-            myVideo.addEventListener('touchstart', this.onTouchEvent.bind(this), false);
-            myVideo.addEventListener('touchmove', this.onTouchEvent.bind(this), false);
-            myVideo.addEventListener('touchend', this.onTouchEvent.bind(this), false);
-        }else{
-            $("#video").click(this.onClickEvent.bind(this))
-        }
-
-        //监听播放开始
-        myVideo.addEventListener('play',function(){
-            console.log("开始播放");
-        });
- 
-        //监听播放结束
-        myVideo.addEventListener('pause',function(){
-            console.log("播放暂停");
-        });
- 
-        //监听播放结束
-        myVideo.addEventListener('ended',function(){
-            console.log("播放结束");
-            hide('video');
-            isPlay = false;
-            count = 0;
-            show('next')
-        });
-
-        myVideo.addEventListener("timeupdate",function(){
-            var timeDisplay = myVideo.currentTime;
-            console.log("play time : " + myVideo.currentTime + " index : " + questionPauseIndex)
-            if(timeDisplay >= questionPausePoit[questionPauseIndex]){
-                myVideo.pause();
-                isPlay = false;
-            }
-        },false);
-    }
-
-    function onClickEvent(event){
-        this.handleQuestion(event.pageX,event.pageY);
-    }
-
-    function onTouchEvent(event){
-        var event = event || window.event;
-        switch (event.type) {
-                case "touchstart":
-                    console.log("touch start")
-                    break;
-                case "touchend":
-                    console.log("touch end " + event.pageX)
-                    this.handleQuestion(event.changedTouches[0].clientX,event.changedTouches[0].clientY);
-                    break;
-                case "touchmove":
-                    console.log("touch move")
-                    break;
-        }
-    }
-
-    function handleQuestion(x,y){
-        if(isPlay){
-            return
-        }
-        console.log("select answer x : " + x + " y : " + y);
-        var videoHeight = this.bodyHeight
-        var answerHeight = videoHeight * 0.1345728;
-        if(questionPauseIndex == 0){
-            var top = 0;
-            if(y > videoHeight * 0.339 && y < (videoHeight * 0.339 + answerHeight)){
-                top = videoHeight * 0.339;
-                questionAnswer[0] = 1;
-            }else if(y > videoHeight * 0.5031 && y < (videoHeight * 0.5031 + answerHeight)){
-                top = videoHeight * 0.5031;
-                questionAnswer[0] = 2;
-            }else if( y > videoHeight * 0.6703 && y < (videoHeight * 0.6703 + answerHeight)){
-                top = videoHeight * 0.6703;
-                questionAnswer[0] = 3;
-            }else{
-                return;
-            }
-            this.removeAnswerSelect('answer_id')
-            show("next")
-            addAnswerSelect(top);
-        }else if(questionPauseIndex == 1){
-            var top = 0;
-            if(y > videoHeight * 0.339 && y < (videoHeight * 0.339 + answerHeight)){
-                top = videoHeight * 0.339;
-                questionAnswer[0] = 1;
-            }else if(y > videoHeight * 0.5031 && y < (videoHeight * 0.5031 + answerHeight)){
-                top = videoHeight * 0.5031;
-                questionAnswer[0] = 2;
-            }else{
-                return;
-            }
-            this.removeAnswerSelect('answer_id')
-            show("next")
-            addAnswerSelect(top);
-        }
-    }
-
-    function startPlay(){
-        this.hide("start")
-        this.show("video")
-        var myVideo = document.getElementById("video")
-        myVideo.play()
-        isPlay = true;
-        questionPauseIndex ++;
-        // myVideo.currentTime=176;
-    }
-
-    function addAnswerSelect(top){
-        var bodyWidth = document.documentElement.clientWidth;
-        var bodyHeight = document.documentElement.clientHeight;
-
-        var parentDiv = document.getElementById("wrapper");
-        var answerDiv = document.createElement("div");
-        var styleDes = "position:" + "absolute;";
-        styleDes += ("width:" + (bodyWidth - 10) + 'px;');
-        styleDes += ("height:" + (bodyHeight * 0.1345728) + 'px;');
-        styleDes += ("border:2px dashed #FFFFFF;");
-        styleDes += ("left:3px;");
-        styleDes += ("top:" + top+ "px;");
-        answerDiv.setAttribute('style', styleDes);
-        answerDiv.setAttribute('class', "answer_div");
-        answerDiv.setAttribute('id', "answer_id");
-        parentDiv.appendChild(answerDiv);  
-    }
-
-    function removeAnswerSelect(idName){
-        var div = document.getElementById(idName);
-        if(div){
-            div.parentNode.removeChild(div);
-        }
-    }
-
-    function answerNext(){
-        var myVideo = document.getElementById("video")
-        if(questionPauseIndex == 0){
-            myVideo.play()
-            isPlay =  true;
-            questionPauseIndex ++ ;
-            this.removeAnswerSelect('answer_id')
-            hide("next")
-            if(questionAnswer[0] == 2){
-            }
-        }else if(questionPauseIndex == 1){
-            if(questionAnswer[0] == 1){
-            }else{
-                myVideo.currentTime=190.9;
-            }
-            myVideo.play()
-            isPlay =  true;
-            questionPauseIndex ++ ;
-            this.removeAnswerSelect('answer_id')
-            hide("next")
-        }
-    }
-
-    function hide(tagId){
-        document.getElementById(tagId).style.display = "none"
-    }
-
-    function show(tagId){
-        document.getElementById(tagId).style.display = "block"
-    }
-
-    function browserRedirect() {
-           var sUserAgent = navigator.userAgent.toLowerCase();
-           if (/ipad|iphone|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/.test(sUserAgent)) {
-            return true;
-           } else {
-            return false;
-           }
-    }
-
-</script>
 
 </html>
